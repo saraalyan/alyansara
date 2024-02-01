@@ -1,0 +1,153 @@
+1
+[sara_alyan@localhost ~]$ sudo useradd -m -p "$(openssl passwd -1 123)" user1
+[sara_alyan@localhost ~]$ sudo useradd -m -p "$(openssl passwd -1 123)" user2
+[sara_alyan@localhost ~]$ sudo useradd -m -p "$(openssl passwd -1 123)" user3
+[sara_alyan@localhost ~]$ sudo useradd -m -p "$(openssl passwd -1 123)" user4
+[sara_alyan@localhost ~]$ sudo useradd -m -p "$(openssl passwd -1 123)" user5
+[sara_alyan@localhost ~]$ sudo useradd -m -p "$(openssl passwd -1 123)" user6
+[sara_alyan@localhost ~]$ sudo useradd -m -p "$(openssl passwd -1 123)" user7
+
+------------------------------------------------
+2
+
+[sara_alyan@localhost ~]$ sudo groupadd -g 10000 sales
+[sara_alyan@localhost ~]$ sudo groupadd -g 10001 hr
+[sara_alyan@localhost ~]$ sudo groupadd -g 10002 web
+
+-------------------------------
+3
+
+[sara_alyan@localhost ~]$ sudo usermod -aG sales user2
+[sara_alyan@localhost ~]$ sudo usermod -aG sales user1
+[sara_alyan@localhost ~]$ sudo usermod -aG hr user3
+[sara_alyan@localhost ~]$ sudo usermod -aG hr user4
+[sara_alyan@localhost ~]$ sudo usermod -aG web user5
+[sara_alyan@localhost ~]$ sudo usermod -aG web user6
+[sara_alyan@localhost ~]$ sudo usermod -aG sales user7
+sudo usermod -aG hr user7
+sudo usermod -aG web user7
+----------------------
+4
+[sara_alyan@localhost ~]$ id user1
+id user2
+id user3
+id user4
+id user5
+id user6
+id user7
+uid=1003(user1) gid=1003(user1) groups=1003(user1),10000(sales)
+uid=1004(user2) gid=1004(user2) groups=1004(user2),10000(sales)
+uid=1005(user3) gid=1005(user3) groups=1005(user3),10001(hr)
+uid=1006(user4) gid=1006(user4) groups=1006(user4),10001(hr)
+uid=1007(user5) gid=1007(user5) groups=1007(user5),10002(web)
+uid=1008(user6) gid=1008(user6) groups=1008(user6),10002(web)
+uid=1009(user7) gid=1009(user7) groups=1009(user7),10000(sales),10001(hr),10002(web)
+--------------------------
+5
+[sara_alyan@localhost ~]$ sudo mkdir /depts /depts/sales /depts/hr /depts/web
+Place your finger on the fingerprint reader
+[sara_alyan@localhost ~]$ sudo chgrp sales /depts/sales
+[sara_alyan@localhost ~]$ sudo chgrp hr /depts/hr
+[sara_alyan@localhost ~]$ sudo chgrp web /depts/web
+-------------------------------------------------------
+6
+[sara_alyan@localhost ~]$ sudo chmod 755 /depts
+[sara_alyan@localhost ~]$ sudo chmod 770 /depts/sales /depts/hr /depts/web
+#770,  owner and members only  
+[sara_alyan@localhost ~]$
+---------------------------------------
+7
+[sara_alyan@localhost ~]$ sudo chmod g+s /depts/sales /depts/hr /depts/web
+-----------------------------------------------
+8
+
+[sara_alyan@localhost ~]$ su - user2
+Password: 
+[user2@localhost ~]$ touch /depts/sales/user2.txt
+[user2@localhost ~]$ touch /depts/hr/user2.txt
+touch: cannot touch '/depts/hr/user2.txt': Permission denied
+#not a member of the hr group, 
+[user2@localhost ~]$ touch /depts/web/user2.txt
+touch: cannot touch '/depts/web/user2.txt': Permission denied
+----------------------------------------------
+10
+[sara_alyan@localhost ~]$ sudo visudo
+
+
+-----------------------------------------------
+11
+[sara_alyan@localhost ~]$ su - user3
+Password: 
+[user3@localhost ~]$ sudo umount /boot
+ 
+-------------------------------------------------------
+12
+
+user3@localhost ~]$ su - user4
+Password: 
+[user4@localhost ~]$ sudo mount /boot
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for user4: 
+mount: /boot: /dev/nvme0n1p5 already mounted on /boot.
+[user4@localhost ~]$ sudo fdisk -l
+Disk /dev/nvme0n1: 476.94 GiB, 512110190592 bytes, 1000215216 sectors
+------------------------------------------------
+                         cd^C
+[sara_alyan@localhost ~]$ sudo mkdir /testdir
+Place your finger on the fingerprint reader
+[sara_alyan@localhost ~]$ sudo chmod 770 /testdir
+[sara_alyan@localhost ~]$ sudo chgrp sales /testdir
+[sara_alyan@localhost ~]$ sudo chmod g+r-x /testdir
+[sara_alyan@localhost ~]$ touch /testdir/testfile
+touch: cannot touch '/testdir/testfile': Permission denied
+[sara_alyan@localhost ~]$ chmod g+rw /testdir/testfile
+chmod: cannot access '/testdir/testfile': Permission denied
+[sara_alyan@localhost ~]$ chmod g+rw /testdir
+chmod: changing permissions of '/testdir': Operation not permitted
+[sara_alyan@localhost ~]$ sudo chmod g+rw /testdir
+[sara_alyan@localhost ~]$ touch /testdir/testfile
+touch: cannot touch '/testdir/testfile': Permission denied
+[sara_alyan@localhost ~]$ sudo chmod g+s /testdir
+[sara_alyan@localhost ~]$ 
+
+
+---------------------------------------------------------------------
+[sara_alyan@localhost ~]$ sudo mkdir /opt/research
+[sara_alyan@localhost ~]$ sudo chown root:root /opt/research
+[sara_alyan@localhost ~]$ sudo chmod 770 /opt/research
+[sara_alyan@localhost ~]$ sudo setfacl -m g:grads:rwX /opt/research
+[sara_alyan@localhost ~]$ sudo setfacl -m g:profs:rwX /opt/research
+[sara_alyan@localhost ~]$ sudo setfacl -m g:interns:rX /opt/research
+
+---------------------------------
+[sara_alyan@localhost ~]$ sudo nano /etc/selinux/config
+Set SELINUX=permissive
+[sara_alyan@localhost ~]$ sudo reboot
+
+--------------------------
+i dont change it :)
+[sara_alyan@localhost ~]$ sestatus
+SELinux status:                 enabled
+---------------------------------------
+sudo nano /etc/selinux/config
+Set SELINUX=enforcing
+
+-------------------------------------
+sudo setenforce 1
+
+-----------------
+[sara_alyan@localhost ~]$ sudo mv ~root/resolv.conf /etc/resolv.conf
+-------------------------
+[sara_alyan@localhost ~]$ ls -Z /etc/resolv.conf
+---------------------------
+[sara_alyan@localhost ~]$ sudo restorecon /etc/resolv.conf
+-----------------------------
+[sara_alyan@localhost ~]$ ls -Z /etc/resolv.conf
+
